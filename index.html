@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>三次ひろみ | Glocal Lab.</title>
+  <meta name="description" content="三次ひろみ / Glocal Lab. 代表。業務改善・DX支援、オンライン業務支援、地域・教育活動。">
+  <link rel="canonical" href="https://glocalab.net">
+
+  <!-- OGP -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://glocalab.net">
+  <meta property="og:title"       content="三次ひろみ | Glocal Lab.">
+  <meta property="og:description" content="業務改善・DX支援、オンライン業務支援、地域・教育活動。引き出し多めのデジタルおばさん。">
+  <meta property="og:image"       content="https://glocalab.net/hiromi.png">
+  <meta name="twitter:card"       content="summary">
+  <meta name="twitter:site"       content="@nagomiyushi">
+  <meta name="twitter:title"      content="三次ひろみ | Glocal Lab.">
+  <meta name="twitter:description" content="業務改善・DX支援、オンライン業務支援、地域・教育活動。引き出し多めのデジタルおばさん。">
+  <meta name="twitter:image"      content="https://glocalab.net/hiromi.png">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:  '#2E5E6E',
+            accent:   '#C17B3A',
+            cream:    '#F5F0E8',
+            dark:     '#3A3A3A',
+            'cream-dark': '#e8e0d0',
+          },
+          fontFamily: {
+            serif:   ['"Noto Serif JP"', 'serif'],
+            sans:    ['"Noto Sans JP"', 'sans-serif'],
+            display: ['"Cormorant Garamond"', 'serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: #F5F0E8;
+      color: #3A3A3A;
+    }
+
+    /* === Grain overlay === */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+
+    /* === Ghost section number === */
+    .sec-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(5rem, 12vw, 9rem);
+      color: rgba(46, 94, 110, 0.06);
+      position: absolute;
+      top: -1rem;
+      left: -0.25rem;
+      line-height: 1;
+      font-weight: 300;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* === Header === */
+    #site-header {
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    #site-header.scrolled {
+      background: rgba(245,240,232,0.97);
+      box-shadow: 0 1px 20px rgba(46,94,110,0.08);
+    }
+
+    /* === Hamburger === */
+    .hbg span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: #2E5E6E;
+      margin: 5px 0;
+      transition: transform 0.3s, opacity 0.3s;
+      transform-origin: center;
+    }
+    .hbg.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hbg.open span:nth-child(2) { opacity: 0; }
+    .hbg.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    #mobile-nav {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    #mobile-nav.open { max-height: 400px; }
+
+    /* === Hero === */
+    .hero-photo-ring {
+      position: relative;
+    }
+    .hero-photo-ring::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px dashed rgba(193,123,58,0.3);
+      animation: spin-slow 30s linear infinite;
+    }
+    @keyframes spin-slow {
+      to { transform: rotate(360deg); }
+    }
+
+    /* === Tags === */
+    .tag {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 11px;
+      background: rgba(46,94,110,0.08);
+      color: #2E5E6E;
+      border: 1px solid rgba(46,94,110,0.12);
+      padding: 3px 12px;
+      border-radius: 999px;
+    }
+
+    /* === Divider line === */
+    .h-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(193,123,58,0.6);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+    }
+    .h-rule::before, .h-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(46,94,110,0.15);
+    }
+
+    /* === Cards: Works / Note === */
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(46,94,110,0.07);
+      box-shadow: 0 2px 10px rgba(46,94,110,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 14px 32px rgba(46,94,110,0.13);
+    }
+    .card img {
+      transition: transform 0.5s ease;
+    }
+    .card:hover img {
+      transform: scale(1.05);
+    }
+
+    /* === Placeholder card backgrounds === */
+    .ph-teal  { background: linear-gradient(135deg, #2E5E6E 0%, #3d7a8e 100%); }
+    .ph-amber { background: linear-gradient(135deg, #C17B3A 0%, #d4934f 100%); }
+    .ph-dark  { background: linear-gradient(135deg, #4a4a4a 0%, #6a6a6a 100%); }
+
+    /* === Filter buttons === */
+    .fil-btn {
+      transition: background 0.2s, color 0.2s;
+    }
+    .fil-btn.active {
+      background: #2E5E6E;
+      color: #F5F0E8;
+      border-color: #2E5E6E;
+    }
+
+    /* === Cat cards === */
+    .cat-card {
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .cat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(46,94,110,0.1);
+    }
+
+    /* === History timeline === */
+    .hist-line {
+      position: relative;
+      padding-left: 1.5rem;
+    }
+    .hist-line::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #C17B3A;
+    }
+    .hist-line::after {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 1.3rem;
+      width: 1px;
+      bottom: -0.5rem;
+      background: rgba(46,94,110,0.12);
+    }
+
+    /* === Gallery photos === */
+    .gal-img {
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      width: 100%;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .gal-wrap:hover .gal-img {
+      transform: scale(1.04);
+    }
+
+    /* === Spin animation for loading === */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .spin { animation: spin 0.9s linear infinite; }
+
+    /* === line-clamp fallback === */
+    .clamp2 {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+
+    /* === Scroll-in animation === */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+  </style>
+</head>
+
+<body class="bg-cream">
+
+<!-- ═══════════════════════════════════
+     ① HEADER
+═══════════════════════════════════ -->
+<header id="site-header" class="fixed top-0 left-0 right-0 z-50 bg-cream/80 backdrop-blur-sm">
+  <div class="max-w-5xl mx-auto px-5 py-3 flex items-center justify-between">
+
+    <!-- Logo -->
+    <a href="#top" class="leading-tight">
+      <div class="font-serif text-primary font-semibold text-lg leading-none">三次 ひろみ</div>
+      <div style="font-family:'Noto Sans JP'; font-size:9px; letter-spacing:0.18em; color:#C17B3A; margin-top:2px;">GLOCAL LAB.</div>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex items-center gap-7 text-sm font-sans text-dark">
+      <a href="#about"    class="hover:text-primary transition-colors">About</a>
+      <a href="#category" class="hover:text-primary transition-colors">Category</a>
+      <a href="#works"    class="hover:text-primary transition-colors">Works</a>
+      <a href="#thinking" class="hover:text-primary transition-colors">Thinking</a>
+      <a href="#contact"
+         class="bg-primary text-cream px-5 py-1.5 rounded-full text-xs tracking-wide hover:bg-accent transition-colors">
+        Contact
+      </a>
+    </nav>
+
+    <!-- Hamburger -->
+    <button class="hbg md:hidden" id="hbg" aria-label="メニュー">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile nav drawer -->
+  <div id="mobile-nav" class="md:hidden border-t border-primary/10 bg-cream/98 backdrop-blur-sm">
+    <nav class="flex flex-col px-5 py-2 text-sm font-sans">
+      <a href="#about"    class="mnav-link py-3 border-b border-cream-dark hover:text-primary transition-colors">About</a>
+      <a href="#category" class="mnav-link py-3 border-b border-cream-dark hover:text-primary transition-colors">Category</a>
+      <a href="#works"    class="mnav-link py-3 border-b border-cream-dark hover:text-primary transition-colors">Works</a>
+      <a href="#thinking" class="mnav-link py-3 border-b border-cream-dark hover:text-primary transition-colors">Thinking</a>
+      <a href="#contact"  class="mnav-link py-3 text-accent font-medium hover:text-primary transition-colors">Contact</a>
+    </nav>
+  </div>
+</header>
+
+
+<!-- ═══════════════════════════════════
+     ② FIRST VIEW
+═══════════════════════════════════ -->
+<section id="top" class="min-h-screen flex flex-col justify-center pt-24 pb-16 px-5">
+  <div class="max-w-5xl mx-auto w-full">
+
+    <div class="flex flex-col md:flex-row items-center gap-10 md:gap-20">
+
+      <!-- Photo -->
+      <div class="flex-shrink-0">
+        <div class="hero-photo-ring">
+          <div class="w-44 h-44 md:w-60 md:h-60 rounded-full overflow-hidden border-4 border-white shadow-lg">
+            <img src="hiromi.png" alt="三次ひろみ"
+                 class="w-full h-full object-cover">
+          </div>
+        </div>
+      </div>
+
+      <!-- Text block -->
+      <div class="text-center md:text-left">
+        <p class="font-sans text-xs tracking-widest text-accent mb-3 uppercase">Glocal Lab. 代表</p>
+
+        <h1 class="font-serif text-primary font-bold leading-tight mb-1"
+            style="font-size: clamp(1.9rem, 6vw, 3rem);">
+          <ruby style="ruby-align:center;">三次<rt style="font-size:0.45em; letter-spacing:0.05em; font-family:'Noto Sans JP'; font-weight:400; color:#2E5E6E; opacity:0.7;">みつぎ</rt></ruby>　<ruby style="ruby-align:center;">ひろみ<rt style="font-size:0.45em; letter-spacing:0.05em; font-family:'Noto Sans JP'; font-weight:400; color:#2E5E6E; opacity:0.7;">　　　</rt></ruby>
+        </h1>
+        <p class="font-sans text-primary/40 mb-4 tracking-widest" style="font-size:11px; letter-spacing:0.2em;">MITSUGU HIROMI</p>
+
+        <div class="flex flex-wrap gap-2 justify-center md:justify-start mb-5">
+          <span class="tag">Excel</span>
+          <span class="tag">RPA</span>
+          <span class="tag">AI</span>
+          <span class="tag">地域DX</span>
+        </div>
+
+        <p class="font-display italic text-dark/60 mb-7"
+           style="font-size: clamp(1rem, 3vw, 1.4rem);">
+          "引き出し多めのデジタルおばさん"
+        </p>
+
+        <!-- Currently Active memo -->
+        <div class="inline-block bg-white/70 border border-primary/12 rounded-2xl px-5 py-4 text-left shadow-sm">
+          <p class="font-sans uppercase tracking-widest text-accent mb-2.5"
+             style="font-size:10px; letter-spacing:0.15em;">
+            Currently Active
+          </p>
+          <ul class="font-sans text-dark/65 space-y-1.5" style="font-size:12px;">
+            <li class="flex items-start gap-2">
+              <span class="text-accent mt-0.5 text-xs">▸</span>
+              2026/05 業務分解ワークショップ開催
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-accent mt-0.5 text-xs">▸</span>
+              子どもメディア俱楽部 運営中
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-accent mt-0.5 text-xs">▸</span>
+              地域事業者向けDX支援
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-accent mt-0.5 text-xs">▸</span>
+              note / X 更新中
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="flex justify-center mt-16 flex-col items-center gap-2">
+      <span class="font-sans text-primary/30 tracking-widest" style="font-size:10px;">SCROLL</span>
+      <div class="w-px h-10 bg-primary/15"></div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════
+     ③ ABOUT ME
+═══════════════════════════════════ -->
+<section id="about" class="py-24 bg-white/40">
+  <div class="max-w-5xl mx-auto px-5">
+
+    <!-- Section header -->
+    <div class="relative mb-14 reveal">
+      <span class="sec-num select-none">01</span>
+      <p class="font-sans text-accent tracking-widest uppercase mb-1" style="font-size:11px;">About Me</p>
+      <h2 class="font-serif text-primary" style="font-size:clamp(1.6rem,5vw,2.5rem);">わたしについて</h2>
+    </div>
+
+    <!-- Intro text -->
+    <div class="max-w-2xl mb-14 reveal">
+      <div class="font-sans text-dark/75 leading-relaxed space-y-4" style="font-size:15px;">
+        <p>この10年ほど、<br>全国各地の地域活動やまちづくりの現場を訪ねながら、</p>
+        <ul class="space-y-2 pl-2">
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span>地域コミュニティ
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span>教育
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span>働き方
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span>地方の課題
+          </li>
+        </ul>
+        <p>について見てきました。</p>
+        <p>現在の活動は、<br>そうした現場で感じた課題意識がベースになっています。</p>
+      </div>
+    </div>
+
+    <!-- Inspection photo gallery -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-20 reveal">
+      <figure class="gal-wrap overflow-hidden rounded-xl">
+        <img src="視察_まるも.JPG"   alt="まるも（千葉）" class="gal-img">
+        <figcaption class="font-sans text-center text-dark/45 mt-1.5" style="font-size:11px;">まるも（千葉）</figcaption>
+      </figure>
+      <figure class="gal-wrap overflow-hidden rounded-xl">
+        <img src="視察_まるも2.JPG"  alt="まるも（千葉）" class="gal-img">
+        <figcaption class="font-sans text-center text-dark/45 mt-1.5" style="font-size:11px;">まるも（千葉）</figcaption>
+      </figure>
+      <figure class="gal-wrap overflow-hidden rounded-xl">
+        <img src="視察_図書館.JPG"   alt="オガール（岩手）" class="gal-img">
+        <figcaption class="font-sans text-center text-dark/45 mt-1.5" style="font-size:11px;">オガール（岩手）</figcaption>
+      </figure>
+      <figure class="gal-wrap overflow-hidden rounded-xl">
+        <img src="視察_日南.JPG"     alt="油津商店街（日南）" class="gal-img">
+        <figcaption class="font-sans text-center text-dark/45 mt-1.5" style="font-size:11px;">油津商店街（日南）</figcaption>
+      </figure>
+    </div>
+
+    <!-- History -->
+    <div class="reveal">
+      <div class="h-rule font-display text-lg mb-8 text-accent/70">History</div>
+      <ul class="max-w-2xl space-y-5">
+        <li class="hist-line font-sans text-dark/75" style="font-size:14px;">
+          <span class="font-medium text-dark">オンライン業務支援</span>　約12年
+        </li>
+        <li class="hist-line font-sans text-dark/75" style="font-size:14px;">
+          <span class="font-medium text-dark">輸出関連業務のシステム改善</span>　8年
+        </li>
+        <li class="hist-line font-sans text-dark/75" style="font-size:14px;">
+          <span class="font-medium text-dark">Excel・Access VBA</span> 約30年 ／
+          <span class="font-medium text-dark">JS・GAS</span> 約10年 ／
+          <span class="font-medium text-dark">RPA</span> 約5年 による業務改善
+        </li>
+        <li class="hist-line font-sans text-dark/75" style="font-size:14px;">
+          <span class="font-medium text-dark">Web系</span>　約20年
+        </li>
+        <li class="hist-line font-sans text-dark/75" style="font-size:14px;">
+          <span class="font-medium text-dark">デザイン会社経営</span>　10年
+        </li>
+        <li class="hist-line font-sans text-dark/75" style="font-size:14px;">
+          <span class="font-medium text-dark">地域教育活動</span>　約7年
+        </li>
+        <li class="hist-line font-sans text-dark/75" style="font-size:14px;">
+          <span class="font-medium text-dark">ワークショップ・イベント運営</span>　約4年
+        </li>
+        <li class="hist-line font-sans text-dark/75 !pb-0" style="font-size:14px;">
+          <span class="font-medium text-dark">海外勤務歴</span>　約5年
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════
+     ④ CATEGORY
+═══════════════════════════════════ -->
+<section id="category" class="py-24">
+  <div class="max-w-5xl mx-auto px-5">
+
+    <div class="relative mb-14 reveal">
+      <span class="sec-num select-none">02</span>
+      <p class="font-sans text-accent tracking-widest uppercase mb-1" style="font-size:11px;">Category</p>
+      <h2 class="font-serif text-primary" style="font-size:clamp(1.6rem,5vw,2.5rem);">活動カテゴリー</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+
+      <!-- 業務改善 -->
+      <div class="cat-card bg-white/70 border border-primary/10 rounded-2xl p-7 shadow-sm"
+           onclick="filterWorks('dx'); scrollToWorks()">
+        <div class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center mb-5 text-xl">⚙️</div>
+        <h3 class="font-serif text-primary text-xl mb-4 leading-snug">業務改善・<br>DX支援</h3>
+        <ul class="font-sans text-dark/55 space-y-2" style="font-size:12px;">
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> Excel / GAS / RPA</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> 業務整理・属人化整理</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> AI活用</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> バックオフィス改善</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> 業務改革ツール制作</li>
+        </ul>
+        <p class="font-sans text-primary/40 mt-5" style="font-size:11px;">Works を見る →</p>
+      </div>
+
+      <!-- オンライン業務支援 -->
+      <div class="cat-card bg-primary/5 border border-primary/15 rounded-2xl p-7 shadow-sm"
+           onclick="filterWorks('online'); scrollToWorks()">
+        <div class="w-11 h-11 bg-accent rounded-xl flex items-center justify-center mb-5 text-xl">💻</div>
+        <h3 class="font-serif text-primary text-xl mb-4 leading-snug">オンライン<br>業務支援</h3>
+        <ul class="font-sans text-dark/55 space-y-2" style="font-size:12px;">
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> オンライン秘書</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> 運営サポート</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> 業務フロー改善</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> EC運営サポート</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> デザイン・Web制作</li>
+        </ul>
+        <p class="font-sans text-primary/40 mt-5" style="font-size:11px;">Works を見る →</p>
+      </div>
+
+      <!-- 地域・教育 -->
+      <div class="cat-card bg-white/70 border border-primary/10 rounded-2xl p-7 shadow-sm"
+           onclick="filterWorks('community'); scrollToWorks()">
+        <div class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center mb-5 text-xl">🌿</div>
+        <h3 class="font-serif text-primary text-xl mb-4 leading-snug">地域・<br>教育活動</h3>
+        <ul class="font-sans text-dark/55 space-y-2" style="font-size:12px;">
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> 子どもメディア俱楽部</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> ワークショップ</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> 地域活動</li>
+          <li class="flex items-center gap-2"><span class="text-accent">—</span> 教育関連（英語）</li>
+        </ul>
+        <p class="font-sans text-primary/40 mt-5" style="font-size:11px;">Works を見る →</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════
+     ⑤ WORKS
+═══════════════════════════════════ -->
+<section id="works" class="py-24 bg-white/40">
+  <div class="max-w-5xl mx-auto px-5">
+
+    <div class="relative mb-10 reveal">
+      <span class="sec-num select-none">03</span>
+      <p class="font-sans text-accent tracking-widest uppercase mb-1" style="font-size:11px;">Works</p>
+      <h2 class="font-serif text-primary" style="font-size:clamp(1.6rem,5vw,2.5rem);">実績・プロジェクト</h2>
+    </div>
+
+    <!-- Filter -->
+    <div class="flex flex-wrap gap-2 mb-10 reveal">
+      <button class="fil-btn font-sans text-xs px-4 py-2 rounded-full border border-primary/25 text-primary active"
+              onclick="filterWorks('all')" data-f="all">すべて</button>
+      <button class="fil-btn font-sans text-xs px-4 py-2 rounded-full border border-primary/25 text-primary"
+              onclick="filterWorks('dx')" data-f="dx">業務改善・DX支援</button>
+      <button class="fil-btn font-sans text-xs px-4 py-2 rounded-full border border-primary/25 text-primary"
+              onclick="filterWorks('online')" data-f="online">オンライン業務支援</button>
+      <button class="fil-btn font-sans text-xs px-4 py-2 rounded-full border border-primary/25 text-primary"
+              onclick="filterWorks('community')" data-f="community">地域・教育活動</button>
+    </div>
+
+    <!-- Grid (populated by JS) -->
+    <div id="works-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
+
+
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════
+     ⑥ THINKING / NOTE
+═══════════════════════════════════ -->
+<section id="thinking" class="py-24">
+  <div class="max-w-5xl mx-auto px-5">
+
+    <div class="relative mb-14 reveal">
+      <span class="sec-num select-none">04</span>
+      <p class="font-sans text-accent tracking-widest uppercase mb-1" style="font-size:11px;">Thinking / Note</p>
+      <h2 class="font-serif text-primary" style="font-size:clamp(1.6rem,5vw,2.5rem);">最近の記事</h2>
+    </div>
+
+    <!-- Loading -->
+    <div id="note-loading" class="flex flex-col items-center gap-4 py-20">
+      <div class="w-8 h-8 rounded-full border-2 border-primary/20 border-t-primary spin"></div>
+      <p class="font-sans text-dark/35" style="font-size:13px;">記事を読み込み中...</p>
+    </div>
+
+    <!-- Error -->
+    <div id="note-error" class="hidden text-center py-20">
+      <p class="font-sans text-dark/40 mb-4" style="font-size:13px;">記事の取得に失敗しました</p>
+      <a href="https://note.com/business_lab_jp" target="_blank" rel="noopener"
+         class="font-sans text-sm text-accent hover:text-primary transition-colors underline">
+        noteで読む →
+      </a>
+    </div>
+
+    <!-- Articles (populated by JS) -->
+    <div id="note-grid" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+
+    <div class="text-center mt-12">
+      <a href="https://note.com/business_lab_jp" target="_blank" rel="noopener"
+         class="inline-flex items-center gap-2 font-sans text-sm text-primary border border-primary/25
+                px-7 py-3 rounded-full hover:bg-primary hover:text-cream transition-all">
+        noteをもっと見る &nbsp;→
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════
+     ⑦ CONTACT
+═══════════════════════════════════ -->
+<section id="contact" class="py-28 bg-primary">
+  <div class="max-w-5xl mx-auto px-5 text-center">
+
+    <p class="font-sans tracking-widest uppercase text-accent mb-3" style="font-size:11px; letter-spacing:0.2em;">Contact</p>
+    <h2 class="font-serif text-cream mb-4" style="font-size:clamp(1.8rem,5vw,3rem);">お問い合わせ</h2>
+    <p class="font-sans text-cream/50 mb-14 max-w-sm mx-auto leading-relaxed" style="font-size:14px;">
+      ご依頼・ご相談など、<br>お気軽にご連絡ください。
+    </p>
+
+    <!-- Location -->
+    <p class="font-sans text-cream/40 mb-10 tracking-wide" style="font-size:12px;">
+      📍 熊本県和水町
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
+
+      <!-- Email -->
+      <a href="mailto:main.addr@glocalab.net"
+         class="flex items-center gap-2.5 bg-cream text-primary font-sans text-sm
+                px-6 py-3.5 rounded-full hover:bg-accent hover:text-cream transition-all shadow-sm">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        main.addr@glocalab.net
+      </a>
+
+      <!-- X -->
+      <a href="https://x.com/nagomiyushi" target="_blank" rel="noopener"
+         class="flex items-center gap-2.5 bg-white/10 text-cream border border-cream/20 font-sans text-sm
+                px-6 py-3.5 rounded-full hover:bg-white/20 transition-all">
+        <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        @nagomiyushi
+      </a>
+
+      <!-- note -->
+      <a href="https://note.com/business_lab_jp" target="_blank" rel="noopener"
+         class="flex items-center gap-2.5 bg-white/10 text-cream border border-cream/20 font-sans text-sm
+                px-6 py-3.5 rounded-full hover:bg-white/20 transition-all">
+        <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1.5 5.5h-3A.5.5 0 0 0 10 8v.5h-.5a.5.5 0 0 0 0 1H10v6a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5V8a.5.5 0 0 0-.5-.5z"/>
+        </svg>
+        note
+      </a>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="bg-dark py-7 text-center">
+  <p class="font-sans text-white/25" style="font-size:11px;">
+    © 2026 三次ひろみ / Glocal Lab. All rights reserved.
+  </p>
+</footer>
+
+
+<!-- ═══════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────
+   ★ NOTE ID 設定
+   ここを自分の note ID に書き換えてください
+   例）https://note.com/business_lab_jp → 'business_lab_jp'
+───────────────────────────────────── */
+const NOTE_ID = 'business_lab_jp';
+/* ───────────────────────────────────── */
+
+const NOTE_TOP = `https://note.com/${NOTE_ID}`;
+
+/* ── Header scroll effect ── */
+const siteHeader = document.getElementById('site-header');
+window.addEventListener('scroll', () => {
+  siteHeader.classList.toggle('scrolled', window.scrollY > 30);
+}, { passive: true });
+
+/* ── Hamburger ── */
+const hbgBtn   = document.getElementById('hbg');
+const mobileNav = document.getElementById('mobile-nav');
+hbgBtn.addEventListener('click', () => {
+  hbgBtn.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+});
+document.querySelectorAll('.mnav-link').forEach(el =>
+  el.addEventListener('click', () => {
+    hbgBtn.classList.remove('open');
+    mobileNav.classList.remove('open');
+  })
+);
+
+/* ── Scroll-reveal ── */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ── Works data ── */
+const WORKS = [
+  /* --- オンライン業務支援 --- */
+  { title: 'オンライン秘書',                 image: '打ち合わせ_オンライン.jpg', cat: 'online',    label: 'オンライン業務支援', url: NOTE_TOP },
+  { title: 'EC運営サポート',                 image: '仕事場.JPG',               cat: 'online',    label: 'オンライン業務支援', url: NOTE_TOP },
+  { title: 'ノンデザイナー向けデザイン講座', image: 'ノンデザイナーのためのデザイン講座.png', cat: 'online', label: 'オンライン業務支援', url: NOTE_TOP },
+  /* --- 業務改善・DX支援 --- */
+  { title: '業務分解ワークショップ',         image: '仕事ワークショップ.jpg',   cat: 'dx', label: '業務改善・DX支援', url: 'https://businesslab-i3f.pages.dev/workshop/' },
+  { title: '業務分解ツール開発',             image: '業務分解ツール開発.jpg',   cat: 'dx', label: '業務改善・DX支援', url: 'https://hiromi-code.github.io/BusinessLab/gyomu-kaikaku/' },
+  { title: 'RPA導入支援',                   image: 'RPA.JPG',                  cat: 'dx', label: '業務改善・DX支援', url: NOTE_TOP },
+  /* --- 地域・教育活動 --- */
+  { title: '子ども出版社',                   image: '子ども出版社.jpg',         cat: 'community', label: '地域・教育活動', url: 'https://nagomi-publishing.studio.site/' },
+  { title: '子どもメディア俱楽部',           image: '神楽プロジェクト.jpg',     cat: 'community', label: '地域・教育活動', url: 'https://hiromi-code.github.io/kodomo-media-club/kodomo-media-club.html' },
+  { title: '子どもまんが倶楽部',             image: 'まんがワークショップ.JPG', cat: 'community', label: '地域・教育活動', url: 'https://nagomi-publishing.studio.site/%E3%81%BE%E3%82%93%E3%81%8C%E4%BF%B1%E6%A5%BD%E9%83%A8' },
+  { title: '手すき和紙プロダクトコンペティション（×崇城大学）', image: '手すき和紙イベント.JPG', cat: 'community', label: '地域・教育活動', url: NOTE_TOP },
+  { title: '菊池川流域高校生サミット広報部', image: '広報部.JPG',              cat: 'community', label: '地域・教育活動', url: 'https://highschoolsamitto.wixsite.com/highscsum' },
+  { title: '菊池川流域の恵み体験協議会',     image: '菊池川流域.JPG',          cat: 'community', label: '地域・教育活動', url: NOTE_TOP },
+];
+
+function workCard(w) {
+  const url = w.url || NOTE_TOP;
+  const thumb = w.image
+    ? `<div class="overflow-hidden" style="aspect-ratio:4/3;">
+         <img src="${w.image}" alt="${w.title}"
+              class="w-full h-full object-cover"
+              onerror="this.parentElement.innerHTML=phFallback('${w.ph||'ph-teal'}','${w.icon||'✦'}')">
+       </div>`
+    : `<div class="${w.ph||'ph-teal'} flex items-center justify-center" style="aspect-ratio:4/3;">
+         <span style="font-size:2.8rem; opacity:0.75;">${w.icon||'✦'}</span>
+       </div>`;
+
+  return `<a href="${url}" target="_blank" rel="noopener" class="card block">
+    ${thumb}
+    <div class="p-4">
+      <p class="font-sans text-accent mb-1" style="font-size:10px; letter-spacing:0.06em;">${w.label}</p>
+      <h3 class="font-sans font-medium text-dark leading-snug" style="font-size:13px;">${w.title}</h3>
+    </div>
+  </a>`;
+}
+
+function phFallback(ph, icon) {
+  return `<div class="${ph} w-full h-full flex items-center justify-center">
+    <span style="font-size:2.8rem; opacity:0.75;">${icon}</span>
+  </div>`;
+}
+
+function filterWorks(cat) {
+  const items = cat === 'all' ? WORKS : WORKS.filter(w => w.cat === cat);
+  document.getElementById('works-grid').innerHTML = items.map(workCard).join('');
+  document.querySelectorAll('.fil-btn').forEach(btn =>
+    btn.classList.toggle('active', btn.dataset.f === cat)
+  );
+}
+
+function scrollToWorks() {
+  document.getElementById('works').scrollIntoView({ behavior: 'smooth' });
+}
+
+filterWorks('all'); // initial render
+
+
+/* ── Note RSS fetch ── */
+async function fetchNote() {
+  const loading = document.getElementById('note-loading');
+  const errEl   = document.getElementById('note-error');
+  const grid    = document.getElementById('note-grid');
+
+  const rssUrl = `https://note.com/${NOTE_ID}/rss`;
+  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+  try {
+    const res = await fetch(apiUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (data.status !== 'ok' || !Array.isArray(data.items) || data.items.length === 0) {
+      throw new Error('No items');
+    }
+
+    const articles = data.items.slice(0, 3);
+
+    grid.innerHTML = articles.map(art => {
+      const d   = new Date(art.pubDate);
+      const ymd = `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+      const thumb = art.thumbnail || (art.enclosure && art.enclosure.link) || '';
+
+      const thumbHtml = thumb
+        ? `<img src="${thumb}" alt="${art.title}"
+               class="w-full h-full object-cover"
+               onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center bg-primary/5\\'><span style=\\'font-size:2rem;\\'>✍️</span></div>'">`
+        : `<div class="w-full h-full flex items-center justify-center bg-primary/5">
+             <span style="font-size:2rem;">✍️</span>
+           </div>`;
+
+      return `<a href="${art.link}" target="_blank" rel="noopener" class="card block">
+        <div class="overflow-hidden" style="aspect-ratio:16/9;">${thumbHtml}</div>
+        <div class="p-4">
+          <p class="font-sans text-dark/35 mb-1" style="font-size:11px;">${ymd}</p>
+          <h3 class="font-sans font-medium text-dark clamp2 leading-snug" style="font-size:13px;">${art.title}</h3>
+        </div>
+      </a>`;
+    }).join('');
+
+    loading.classList.add('hidden');
+    grid.classList.remove('hidden');
+
+  } catch (err) {
+    console.error('[Note fetch]', err);
+    loading.classList.add('hidden');
+    errEl.classList.remove('hidden');
+  }
+}
+
+fetchNote();
+
+</script>
+</body>
+</html>
