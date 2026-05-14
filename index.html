@@ -589,59 +589,55 @@ function scrollToWorks() {
 
 filterWorks('all');
 
-/* ── Note RSS fetch ── */
+/* ── Note RSS fetch（XML直接解析・media:thumbnail対応） ── */
 async function fetchNote() {
   const loading = document.getElementById('note-loading');
   const errEl   = document.getElementById('note-error');
   const grid    = document.getElementById('note-grid');
 
-  const rssUrl = `https://note.com/${NOTE_ID}/rss`;
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+  const rssUrl   = `https://note.com/${NOTE_ID}/rss`;
+  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
 
   try {
-    const res = await fetch(apiUrl);
+    const res = await fetch(proxyUrl);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
-    if (data.status !== 'ok' || !Array.isArray(data.items) || data.items.length === 0) {
-      throw new Error('No items');
-    }
+    const parser = new DOMParser();
+    const xml    = parser.parseFromString(data.contents, 'text/xml');
+    const items  = Array.from(xml.querySelectorAll('item')).slice(0, 3);
 
-    const articles = data.items.slice(0, 3);
+    if (items.length === 0) throw new Error('No items');
 
-    grid.innerHTML = articles.map(art => {
-      const d   = new Date(art.pubDate);
-      const ymd = `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+    grid.innerHTML = items.map(item => {
+      const title   = item.querySelector('title')?.textContent || '';
+      const link    = item.querySelector('link')?.nextSibling?.nodeValue?.trim()
+                   || item.querySelector('link')?.textContent || '';
+      const pubDate = item.querySelector('pubDate')?.textContent || '';
+      const d       = new Date(pubDate);
+      const ymd     = isNaN(d)
+        ? ''
+        : `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
 
-      /* ── サムネイル取得（media:thumbnail 対応） ── */
-      let thumb = '';
-      if (art.thumbnail) {
-        thumb = art.thumbnail;
-      } else if (art.enclosure && art.enclosure.link) {
-        thumb = art.enclosure.link;
-      } else if (art['media:thumbnail'] && art['media:thumbnail']['@url']) {
-        thumb = art['media:thumbnail']['@url'];
-      } else if (art.description) {
-        const m = art.description.match(/<img[^>]+src=["']([^"']+)["']/i);
-        if (m) thumb = m[1];
-      }
-      /* デバッグ用（画像が出たら削除してください） */
-      console.log('[note]', art.title, '| thumb:', thumb);
+      /* media:thumbnail を名前空間で取得 */
+      const thumbEl = item.getElementsByTagNameNS('http://search.yahoo.com/mrss/', 'thumbnail')[0]
+                   || item.querySelector('thumbnail');
+      const thumb   = thumbEl ? (thumbEl.getAttribute('url') || thumbEl.textContent) : '';
 
       const thumbHtml = thumb
-        ? `<img src="${thumb}" alt="${art.title}"
+        ? `<img src="${thumb}" alt="${title}"
                class="w-full h-full object-cover"
                referrerpolicy="no-referrer"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center bg-primary/5\\'><span style=\\'font-size:2rem;\\'>✍️</span></div>'">`
+               onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center bg-primary/5\'><span style=\'font-size:2rem;\'>✍️</span></div>'">`
         : `<div class="w-full h-full flex items-center justify-center bg-primary/5">
              <span style="font-size:2rem;">✍️</span>
            </div>`;
 
-      return `<a href="${art.link}" target="_blank" rel="noopener" class="card block">
+      return `<a href="${link}" target="_blank" rel="noopener" class="card block">
         <div class="overflow-hidden" style="aspect-ratio:16/9;">${thumbHtml}</div>
         <div class="p-4">
           <p class="font-sans text-dark/35 mb-1" style="font-size:11px;">${ymd}</p>
-          <h3 class="font-sans font-medium text-dark clamp2 leading-snug" style="font-size:13px;">${art.title}</h3>
+          <h3 class="font-sans font-medium text-dark clamp2 leading-snug" style="font-size:13px;">${title}</h3>
         </div>
       </a>`;
     }).join('');
