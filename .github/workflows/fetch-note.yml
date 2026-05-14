@@ -1,0 +1,75 @@
+name: Fetch Note Articles
+
+on:
+  schedule:
+    - cron: '0 0 * * 3'   # 毎週水曜日 午前9時（JST）に実行
+  workflow_dispatch:        # 手動実行も可能
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch Note RSS and generate JSON
+        run: |
+          python3 - << 'PYEOF'
+          import urllib.request
+          import xml.etree.ElementTree as ET
+          import json
+          import re
+
+          NOTE_ID = 'business_lab_jp'
+          rss_url = f'https://note.com/{NOTE_ID}/rss'
+
+          req = urllib.request.Request(rss_url, headers={'User-Agent': 'Mozilla/5.0'})
+          with urllib.request.urlopen(req, timeout=15) as r:
+              xml_bytes = r.read()
+
+          # 名前空間を登録
+          ns = {
+              'media': 'http://search.yahoo.com/mrss/',
+              'dc':    'http://purl.org/dc/elements/1.1/',
+          }
+
+          root = ET.fromstring(xml_bytes)
+          items = root.findall('.//item')[:3]
+
+          articles = []
+          for item in items:
+              title   = item.findtext('title') or ''
+              link_el = item.find('link')
+              link    = (link_el.tail or link_el.text or '').strip() if link_el is not None else ''
+              pub     = item.findtext('pubDate') or ''
+
+              # media:thumbnail
+              thumb_el = item.find('media:thumbnail', ns)
+              thumb = ''
+              if thumb_el is not None:
+                  thumb = thumb_el.get('url', '')
+              
+              # fallback: description内のimgタグ
+              if not thumb:
+                  desc = item.findtext('description') or ''
+                  m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', desc)
+                  if m:
+                      thumb = m.group(1)
+
+              articles.append({'title': title, 'link': link, 'pubDate': pub, 'thumbnail': thumb})
+
+          with open('note-articles.json', 'w', encoding='utf-8') as f:
+              json.dump(articles, f, ensure_ascii=False, indent=2)
+
+          print(f'Saved {len(articles)} articles')
+          for a in articles:
+              print(f"  {a['title']} | thumb: {a['thumbnail'][:60] if a['thumbnail'] else 'none'}")
+          PYEOF
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add note-articles.json
+          git diff --staged --quiet || git commit -m "chore: update note articles"
+          git push
