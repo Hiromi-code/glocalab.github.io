@@ -596,15 +596,15 @@ async function fetchNote() {
   const grid    = document.getElementById('note-grid');
 
   const rssUrl   = `https://note.com/${NOTE_ID}/rss`;
-  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+  const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`;
 
   try {
     const res = await fetch(proxyUrl);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const xmlText = await res.text();
 
     const parser = new DOMParser();
-    const xml    = parser.parseFromString(data.contents, 'text/xml');
+    const xml    = parser.parseFromString(xmlText, 'text/xml');
     const items  = Array.from(xml.querySelectorAll('item')).slice(0, 3);
 
     if (items.length === 0) throw new Error('No items');
