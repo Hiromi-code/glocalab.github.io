@@ -17,62 +17,52 @@ jobs:
 
       - name: Fetch Note RSS and generate JSON
         run: |
-          python3 - << 'PYEOF'
-          import urllib.request
-          import xml.etree.ElementTree as ET
-          import json
-          import re
+          node - << 'JSEOF'
+          const fs = require('fs');
 
-          NOTE_ID = 'business_lab_jp'
-          rss_url = f'https://note.com/{NOTE_ID}/rss'
-
-          req = urllib.request.Request(rss_url, headers={'User-Agent': 'Mozilla/5.0'})
-          with urllib.request.urlopen(req, timeout=15) as r:
-              xml_bytes = r.read()
-
-          # 名前空間を登録
-          ns = {
-              'media': 'http://search.yahoo.com/mrss/',
-              'dc':    'http://purl.org/dc/elements/1.1/',
+          function extractTag(item, tag) {
+            const cdata = item.match(new RegExp(`<${tag}><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`));
+            if (cdata) return cdata[1];
+            const normal = item.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
+            return normal ? normal[1].trim() : '';
           }
 
-          root = ET.fromstring(xml_bytes)
-          items = root.findall('.//item')[:3]
+          function extractThumbnail(item, description) {
+            const media = item.match(/<media:thumbnail[^>]+url="([^"]+)"/);
+            if (media) return media[1];
+            const enclosure = item.match(/<enclosure[^>]+url="([^"]+)"/);
+            if (enclosure) return enclosure[1];
+            const img = description.match(/<img[^>]+src="([^"]+)"/);
+            if (img) return img[1];
+            return '';
+          }
 
-          articles = []
-          for item in items:
-              title = item.findtext('title') or ''
-              pub   = item.findtext('pubDate') or ''
+          async function main() {
+            const rssUrl = 'https://note.com/business_lab_jp/rss';
+            const res = await fetch(rssUrl, {
+              headers: { 'User-Agent': 'Mozilla/5.0' }
+            });
+            const xml = await res.text();
 
-              # linkはテキストノードではなくtailに入ることがあるため正規表現で取得
-              raw = ET.tostring(item, encoding='unicode')
-              link_m = re.search(r'<link>(.*?)</link>', raw)
-              if not link_m:
-                  # <link/>の直後のテキスト（CDATA形式）
-                  link_m = re.search(r'<link/?>([^<]+)', raw)
-              link = link_m.group(1).strip() if link_m else ''
+            const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)]
+              .slice(0, 3)
+              .map(match => {
+                const item = match[1];
+                const title       = extractTag(item, 'title');
+                const link        = extractTag(item, 'link');
+                const pubDate     = extractTag(item, 'pubDate');
+                const description = extractTag(item, 'description');
+                const thumbnail   = extractThumbnail(item, description);
+                console.log(`  ${title} | thumb: ${thumbnail.slice(0, 60) || 'none'}`);
+                return { title, link, pubDate, thumbnail };
+              });
 
-              # media:thumbnail（属性url）
-              thumb_m = re.search(r'<media:thumbnail[^>]+url=["\']([^"\']+)["\']', raw)
-              thumb = thumb_m.group(1) if thumb_m else ''
+            fs.writeFileSync('note-articles.json', JSON.stringify(items, null, 2));
+            console.log(`Saved ${items.length} articles`);
+          }
 
-              # fallback: description内のimgタグ
-              if not thumb:
-                  desc_m = re.search(r'<description>(.*?)</description>', raw, re.DOTALL)
-                  if desc_m:
-                      img_m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', desc_m.group(1))
-                      if img_m:
-                          thumb = img_m.group(1)
-
-              articles.append({'title': title, 'link': link, 'pubDate': pub, 'thumbnail': thumb})
-
-          with open('note-articles.json', 'w', encoding='utf-8') as f:
-              json.dump(articles, f, ensure_ascii=False, indent=2)
-
-          print(f'Saved {len(articles)} articles')
-          for a in articles:
-              print(f"  {a['title']} | thumb: {a['thumbnail'][:60] if a['thumbnail'] else 'none'}")
-          PYEOF
+          main().catch(e => { console.error(e); process.exit(1); });
+          JSEOF
 
       - name: Commit and push
         run: |
