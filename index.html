@@ -590,26 +590,61 @@ function scrollToWorks() {
 filterWorks('all');
 
 /* ── Note RSS fetch ── */
+<script>
 async function fetchNote() {
   const loading = document.getElementById('note-loading');
   const errEl   = document.getElementById('note-error');
   const grid    = document.getElementById('note-grid');
 
   const rssUrl = `https://note.com/${NOTE_ID}/rss`;
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&count=3`;
 
   try {
-    const res = await fetch(apiUrl);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (data.status !== 'ok' || !data.items?.length) throw new Error('No items');
+    let articles = [];
 
-    grid.innerHTML = data.items.slice(0, 3).map(art => {
-      const d   = new Date(art.pubDate);
+    // ① rss2jsonで取得
+    try {
+      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&count=3`;
+      const res = await fetch(apiUrl);
+      if (!res.ok) throw new Error(`rss2json HTTP ${res.status}`);
+
+      const data = await res.json();
+      if (data.status !== 'ok' || !data.items?.length) {
+        throw new Error('rss2json no items');
+      }
+
+      articles = data.items.slice(0, 3).map(item => ({
+        title: item.title,
+        link: item.link,
+        pubDate: item.pubDate,
+        description: item.description || ''
+      }));
+
+    } catch (e) {
+      console.warn('rss2json failed. fallback...', e);
+
+      // ② 予備：alloriginsでRSSを取得してXML解析
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error(`allorigins HTTP ${res.status}`);
+
+      const xmlText = await res.text();
+      const xml = new DOMParser().parseFromString(xmlText, 'text/xml');
+
+      articles = [...xml.querySelectorAll('item')].slice(0, 3).map(item => ({
+        title: item.querySelector('title')?.textContent || '',
+        link: item.querySelector('link')?.textContent || '',
+        pubDate: item.querySelector('pubDate')?.textContent || '',
+        description: item.querySelector('description')?.textContent || ''
+      }));
+    }
+
+    if (!articles.length) throw new Error('No articles');
+
+    grid.innerHTML = articles.map(art => {
+      const d = new Date(art.pubDate);
       const ymd = isNaN(d) ? '' :
         `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
 
-      /* descriptionのHTMLからimgのsrcを抽出 */
       let thumb = '';
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = art.description || '';
@@ -635,6 +670,7 @@ async function fetchNote() {
     }).join('');
 
     loading.classList.add('hidden');
+    errEl.classList.add('hidden');
     grid.classList.remove('hidden');
 
   } catch (err) {
@@ -645,6 +681,7 @@ async function fetchNote() {
 }
 
 fetchNote();
+</script>
 </script>
 </body>
 </html>
