@@ -41,23 +41,28 @@ jobs:
 
           articles = []
           for item in items:
-              title   = item.findtext('title') or ''
-              link_el = item.find('link')
-              link    = (link_el.tail or link_el.text or '').strip() if link_el is not None else ''
-              pub     = item.findtext('pubDate') or ''
+              title = item.findtext('title') or ''
+              pub   = item.findtext('pubDate') or ''
 
-              # media:thumbnail
-              thumb_el = item.find('media:thumbnail', ns)
-              thumb = ''
-              if thumb_el is not None:
-                  thumb = thumb_el.get('url', '')
-              
+              # linkはテキストノードではなくtailに入ることがあるため正規表現で取得
+              raw = ET.tostring(item, encoding='unicode')
+              link_m = re.search(r'<link>(.*?)</link>', raw)
+              if not link_m:
+                  # <link/>の直後のテキスト（CDATA形式）
+                  link_m = re.search(r'<link/?>([^<]+)', raw)
+              link = link_m.group(1).strip() if link_m else ''
+
+              # media:thumbnail（属性url）
+              thumb_m = re.search(r'<media:thumbnail[^>]+url=["\']([^"\']+)["\']', raw)
+              thumb = thumb_m.group(1) if thumb_m else ''
+
               # fallback: description内のimgタグ
               if not thumb:
-                  desc = item.findtext('description') or ''
-                  m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', desc)
-                  if m:
-                      thumb = m.group(1)
+                  desc_m = re.search(r'<description>(.*?)</description>', raw, re.DOTALL)
+                  if desc_m:
+                      img_m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', desc_m.group(1))
+                      if img_m:
+                          thumb = img_m.group(1)
 
               articles.append({'title': title, 'link': link, 'pubDate': pub, 'thumbnail': thumb})
 
