@@ -615,6 +615,9 @@ async function fetchNote() {
       // rss2json は thumbnail プロパティに画像を格納します。
       // ない場合は enclosure.link に入ることもあるため両方チェック
       const thumb = art.thumbnail || (art.enclosure && art.enclosure.link) || '';
+       if (thumb) {
+        thumb = `https://images.weserv.nl/?url=${encodeURIComponent(thumb)}`;
+      }
       
       const thumbHtml = thumb
         ? `<img src="${thumb}" alt="${art.title}"
