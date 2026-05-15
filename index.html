@@ -589,13 +589,13 @@ function scrollToWorks() {
 
 filterWorks('all');
 
-/* ── Note RSS fetch（rss2json 経由で直接取得） ── */
+/* ── Note RSS fetch（リスト形式バージョン） ── */
 async function fetchNote() {
   const loading = document.getElementById('note-loading');
   const errEl   = document.getElementById('note-error');
   const grid    = document.getElementById('note-grid');
 
-  // ご自身のnote IDに書き換えてください
+  // ご自身のnote ID
   const NOTE_ID = 'business_lab_jp'; 
   const rssUrl = `https://note.com/${NOTE_ID}/rss`;
   const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
@@ -606,33 +606,38 @@ async function fetchNote() {
     const data = await res.json();
     if (data.status !== 'ok' || !data.items || data.items.length === 0) throw new Error('No items');
 
+    // リスト形式にするため、gridのクラスを変更（1列の縦並びにする）
+    grid.className = "flex flex-col gap-4";
+
     grid.innerHTML = data.items.slice(0, 3).map(art => {
       // 日付のフォーマット
-      const d = new Date(art.pubDate.replace(/-/g, '/')); // iOS Safari対応のため置換
+      const d = new Date(art.pubDate.replace(/-/g, '/'));
       const ymd = isNaN(d) ? '' :
         `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
 
-      // rss2json は thumbnail プロパティに画像を格納します。
-      // ない場合は enclosure.link に入ることもあるため両方チェック
-      const thumb = art.thumbnail || (art.enclosure && art.enclosure.link) || '';
-       if (thumb) {
-        thumb = `https://images.weserv.nl/?url=${encodeURIComponent(thumb)}`;
-      }
-      
-      const thumbHtml = thumb
-        ? `<img src="${thumb}" alt="${art.title}"
-               class="w-full h-full object-cover"
-               referrerpolicy="no-referrer"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center bg-primary/5\\'><span style=\\'font-size:2rem;\\'>✍️</span></div>'">`
-        : `<div class="w-full h-full flex items-center justify-center bg-primary/5">
-             <span style="font-size:2rem;">✍️</span>
-           </div>`;
+      // 画像を使わず、シンプルなリスト形式のHTMLを生成
+      return `
+      <a href="${art.link}" target="_blank" rel="noopener" 
+         class="flex items-start gap-4 p-5 bg-white/60 border border-primary/10 rounded-xl hover:bg-white hover:shadow-md hover:-translate-y-1 transition-all">
+        
+        <!-- 左側のアイコン部分（ペンのアイコン） -->
+        <div class="flex-shrink-0 mt-0.5 w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center text-primary/70">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+          </svg>
+        </div>
 
-      return `<a href="${art.link}" target="_blank" rel="noopener" class="card block">
-        <div class="overflow-hidden" style="aspect-ratio:16/9;">${thumbHtml}</div>
-        <div class="p-4">
-          <p class="font-sans text-dark/35 mb-1" style="font-size:11px;">${ymd}</p>
-          <h3 class="font-sans font-medium text-dark clamp2 leading-snug" style="font-size:13px;">${art.title}</h3>
+        <!-- 右側のテキスト部分 -->
+        <div class="flex-grow">
+          <p class="font-sans text-dark/40 mb-1" style="font-size:11px; letter-spacing:0.05em;">${ymd}</p>
+          <h3 class="font-sans font-medium text-dark leading-relaxed" style="font-size:15px;">${art.title}</h3>
+        </div>
+        
+        <!-- 右端の矢印 -->
+        <div class="flex-shrink-0 mt-2 text-primary/30">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
         </div>
       </a>`;
     }).join('');
@@ -648,6 +653,7 @@ async function fetchNote() {
 }
 
 fetchNote();
+
 </script>
 </body>
 </html>
