@@ -271,14 +271,11 @@
           <ruby style="ruby-align:center;">三次<rt style="font-size:0.45em; letter-spacing:0.05em; font-family:'Noto Sans JP'; font-weight:400; color:#2E5E6E; opacity:0.7;">みつぎ</rt></ruby>　<ruby style="ruby-align:center;">ひろみ<rt style="font-size:0.45em; letter-spacing:0.05em; font-family:'Noto Sans JP'; font-weight:400; color:#2E5E6E; opacity:0.7;">　　　</rt></ruby>
         </h1>
         <p class="font-sans text-primary/40 mb-4 tracking-widest" style="font-size:11px; letter-spacing:0.2em;">MITSUGU HIROMI</p>
-        <div class="flex flex-wrap gap-2 justify-center md:justify-start mb-5">
-          <span class="tag">Excel</span>
-          <span class="tag">RPA</span>
-          <span class="tag">AI</span>
-          <span class="tag">地域DX</span>
-        </div>
-        <p class="font-display italic text-dark/60 mb-7" style="font-size: clamp(1rem, 3vw, 1.4rem);">
+        <p class="font-display italic text-dark/60 mb-2" style="font-size: clamp(1rem, 3vw, 1.4rem);">
           "引き出し多めのデジタルおばさん"
+        </p>
+        <p class="font-sans text-dark/45 mb-7 tracking-wide" style="font-size:12px; letter-spacing:0.06em;">
+          地方と都市をつなぐ・業務設計・DX支援
         </p>
         <div class="inline-block bg-white/70 border border-primary/12 rounded-2xl px-5 py-4 text-left shadow-sm">
           <p class="font-sans uppercase tracking-widest text-accent mb-2.5"
@@ -316,7 +313,7 @@
           <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span>地方の課題</li>
         </ul>
         <p>について見てきました。</p>
-        <p>現在の活動は、<br>そうした現場で感じた課題意識がベースになっています。</p>
+        <p>地方では、非効率が"文化"として定着していることがあります。<br>私は、"仕事を整理し、誰でも説明できる状態にすること"を大切にしています。</p>
       </div>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-20 reveal">
@@ -342,7 +339,8 @@
       <ul class="max-w-2xl space-y-5">
         <li class="hist-line font-sans text-dark/75" style="font-size:14px;"><span class="font-medium text-dark">オンライン業務支援</span>　約12年</li>
         <li class="hist-line font-sans text-dark/75" style="font-size:14px;"><span class="font-medium text-dark">輸出関連業務のシステム改善</span>　8年</li>
-        <li class="hist-line font-sans text-dark/75" style="font-size:14px;"><span class="font-medium text-dark">Excel・Access VBA</span> 約30年 ／ <span class="font-medium text-dark">JS・GAS</span> 約10年 ／ <span class="font-medium text-dark">RPA</span> 約5年 による業務改善</li>
+        <li class="hist-line font-sans text-dark/75" style="font-size:14px;"><span class="font-medium text-dark">Excel VBA・GAS・RPAを活用した業務改善支援</span>（RoboPat認定）</li>
+        <li class="hist-line font-sans text-dark/75" style="font-size:14px;"><span class="font-medium text-dark">AI活用前の業務整理・可視化</span>（東京大学AI講座）</li>
         <li class="hist-line font-sans text-dark/75" style="font-size:14px;"><span class="font-medium text-dark">Web系</span>　約20年</li>
         <li class="hist-line font-sans text-dark/75" style="font-size:14px;"><span class="font-medium text-dark">デザイン会社経営</span>　10年</li>
         <li class="hist-line font-sans text-dark/75" style="font-size:14px;"><span class="font-medium text-dark">地域教育活動</span>　約7年</li>
@@ -401,10 +399,17 @@
         <p class="font-sans text-primary/40 mt-5" style="font-size:11px;">Works を見る →</p>
       </div>
     </div>
+    <div class="mt-10 reveal bg-white/50 border border-primary/10 rounded-2xl px-7 py-6 max-w-2xl mx-auto">
+      <p class="font-sans text-accent tracking-widest uppercase mb-4" style="font-size:10px; letter-spacing:0.15em;">よく受ける相談</p>
+      <ul class="font-sans text-dark/65 space-y-2.5" style="font-size:13px;">
+        <li class="flex items-start gap-2.5"><span class="text-accent mt-0.5 flex-shrink-0">▸</span>整理できていない、見える化したい</li>
+        <li class="flex items-start gap-2.5"><span class="text-accent mt-0.5 flex-shrink-0">▸</span>Excelが属人化している</li>
+        <li class="flex items-start gap-2.5"><span class="text-accent mt-0.5 flex-shrink-0">▸</span>業務フローを見直したい</li>
+        <li class="flex items-start gap-2.5"><span class="text-accent mt-0.5 flex-shrink-0">▸</span>チーム運営が煩雑</li>
+      </ul>
+    </div>
   </div>
 </section>
-
-<!-- ⑤ WORKS -->
 <section id="works" class="py-24 bg-white/40">
   <div class="max-w-5xl mx-auto px-5">
     <div class="relative mb-10 reveal">
@@ -528,18 +533,18 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 /* ── Works data ── */
 const WORKS = [
-  { title: 'オンライン秘書',                 image: '打ち合わせ_オンライン.jpg',            cat: 'online', pos: 'right center', label: 'オンライン業務支援'},
-  { title: 'EC運営サポート',                 image: '仕事場.JPG',                           cat: 'online',                      label: 'オンライン業務支援'},
-  { title: 'ノンデザイナー向けデザイン講座', image: 'ノンデザイナーのためのデザイン講座.png', cat: 'online', pos: 'right center', label: 'オンライン業務支援',},
-  { title: '業務分解ワークショップ',         image: '仕事ワークショップ.jpg',               cat: 'dx',                          label: '業務改善・DX支援',  url: 'https://businesslab-i3f.pages.dev/workshop/' },
-  { title: '業務分解ツール開発',             image: '業務分解ツール開発.png',               cat: 'dx',     pos: 'center top',   label: '業務改善・DX支援',  url: 'https://hiromi-code.github.io/BusinessLab/gyomu-kaikaku/' },
+  { title: 'オンライン秘書',                 sub: '属人化解消 / 手作業→半自動化 / 可視化',          image: '打ち合わせ_オンライン.jpg',            cat: 'online', pos: 'right center', label: 'オンライン業務支援'},
+  { title: 'EC運営サポート',                 sub: 'RPA導入で受注処理自動化',                         image: '仕事場.JPG',                           cat: 'online',                      label: 'オンライン業務支援'},
+  { title: 'ノンデザイナー向けデザイン講座', sub: '業務受託するための資格講座',                      image: 'ノンデザイナーのためのデザイン講座.png', cat: 'online', pos: 'right center', label: 'オンライン業務支援',},
+  { title: '業務分解ワークショップ',         sub: '詳細は☞サイトへ',                                image: '仕事ワークショップ.jpg',               cat: 'dx',                          label: '業務改善・DX支援',  url: 'https://businesslab-i3f.pages.dev/workshop/' },
+  { title: '業務分解ツール開発',             sub: '詳細は☞サイトへ',                                image: '業務分解ツール開発.png',               cat: 'dx',     pos: 'center top',   label: '業務改善・DX支援',  url: 'https://hiromi-code.github.io/BusinessLab/gyomu-kaikaku/' },
   { title: 'RPA導入支援',                   image: 'RPA.JPG',                              cat: 'dx',                          label: '業務改善・DX支援'},
-  { title: '子ども出版社',                   image: '子ども出版社.JPG',                     cat: 'community',                   label: '地域・教育活動',    url: 'https://nagomi-publishing.studio.site/' },
-  { title: '子どもメディア俱楽部',           image: '神楽プロジェクト.jpg',                 cat: 'community',                   label: '地域・教育活動',    url: 'https://hiromi-code.github.io/kodomo-media-club/kodomo-media-club.html' },
-  { title: '子どもまんが倶楽部',             image: 'まんがワークショップ.JPG',             cat: 'community',                   label: '地域・教育活動',    url: 'https://nagomi-publishing.studio.site/%E3%81%BE%E3%82%93%E3%81%8C%E4%BF%B1%E6%A5%BD%E9%83%A8' },
+  { title: '子ども出版社',                   sub: '詳細は☞サイトへ',                                image: '子ども出版社.JPG',                     cat: 'community',                   label: '地域・教育活動',    url: 'https://nagomi-publishing.studio.site/' },
+  { title: '子どもメディア俱楽部',           sub: '詳細は☞サイトへ',                                image: '神楽プロジェクト.jpg',                 cat: 'community',                   label: '地域・教育活動',    url: 'https://hiromi-code.github.io/kodomo-media-club/kodomo-media-club.html' },
+  { title: '子どもまんが倶楽部',             sub: '詳細は☞サイトへ',                                image: 'まんがワークショップ.JPG',             cat: 'community',                   label: '地域・教育活動',    url: 'https://nagomi-publishing.studio.site/%E3%81%BE%E3%82%93%E3%81%8C%E4%BF%B1%E6%A5%BD%E9%83%A8' },
   { title: '手すき和紙プロダクトコンペティション（×崇城大学）', image: '手すき和紙イベント.JPG', cat: 'community',             label: '地域・教育活動'},
-  { title: '菊池川流域高校生サミット広報部', image: '広報部.JPG',                           cat: 'community',                   label: '地域・教育活動',    url: 'https://highschoolsamitto.wixsite.com/highscsum' },
-  { title: '菊池川流域の恵み体験協議会',     image: '菊池川流域.JPG',                       cat: 'community',                   label: '地域・教育活動',    url: 'https://www.facebook.com/profile.php?id=100064932334346' },
+  { title: '菊池川流域高校生サミット広報部', sub: '詳細は☞サイトへ',                                image: '広報部.JPG',                           cat: 'community',                   label: '地域・教育活動',    url: 'https://highschoolsamitto.wixsite.com/highscsum' },
+  { title: '菊池川流域の恵み体験協議会',     sub: '詳細は☞サイトへ',                                image: '菊池川流域.JPG',                       cat: 'community',                   label: '地域・教育活動',    url: 'https://www.facebook.com/profile.php?id=100064932334346' },
 ];
 
 function workCard(w) {
@@ -559,6 +564,7 @@ function workCard(w) {
     <div class="p-4 bg-cream/60">
       <p class="font-sans text-accent mb-1" style="font-size:10px; letter-spacing:0.06em;">${w.label}</p>
       <h3 class="font-sans font-medium text-dark leading-snug" style="font-size:13px;">${w.title}</h3>
+      ${w.sub ? `<p class="font-sans text-dark/40 mt-1.5 leading-relaxed" style="font-size:11px;">${w.sub}</p>` : ''}
     </div>
   </a>`;
 }
