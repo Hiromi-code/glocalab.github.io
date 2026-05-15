@@ -589,29 +589,38 @@ function scrollToWorks() {
 
 filterWorks('all');
 
-/* ── Note RSS fetch（note-articles.json から読み込み） ── */
+/* ── Note RSS fetch（rss2json 経由で直接取得） ── */
 async function fetchNote() {
   const loading = document.getElementById('note-loading');
   const errEl   = document.getElementById('note-error');
   const grid    = document.getElementById('note-grid');
 
-  try {
-    const res = await fetch('/note-articles.json?_=' + Date.now());
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const articles = await res.json();
-    if (!Array.isArray(articles) || articles.length === 0) throw new Error('No items');
+  // ご自身のnote IDに書き換えてください
+  const NOTE_ID = 'business_lab_jp'; 
+  const rssUrl = `https://note.com/${NOTE_ID}/rss`;
+  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
-    grid.innerHTML = articles.slice(0, 3).map(art => {
-      const d   = new Date(art.pubDate);
+  try {
+    const res = await fetch(apiUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data.status !== 'ok' || !data.items || data.items.length === 0) throw new Error('No items');
+
+    grid.innerHTML = data.items.slice(0, 3).map(art => {
+      // 日付のフォーマット
+      const d = new Date(art.pubDate.replace(/-/g, '/')); // iOS Safari対応のため置換
       const ymd = isNaN(d) ? '' :
         `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
 
-      const thumb = art.thumbnail || '';
+      // rss2json は thumbnail プロパティに画像を格納します。
+      // ない場合は enclosure.link に入ることもあるため両方チェック
+      const thumb = art.thumbnail || (art.enclosure && art.enclosure.link) || '';
+      
       const thumbHtml = thumb
         ? `<img src="${thumb}" alt="${art.title}"
                class="w-full h-full object-cover"
                referrerpolicy="no-referrer"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center bg-primary/5\'><span style=\'font-size:2rem;\'>✍️</span></div>'">`
+               onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center bg-primary/5\\'><span style=\\'font-size:2rem;\\'>✍️</span></div>'">`
         : `<div class="w-full h-full flex items-center justify-center bg-primary/5">
              <span style="font-size:2rem;">✍️</span>
            </div>`;
