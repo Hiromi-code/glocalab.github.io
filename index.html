@@ -139,7 +139,7 @@
     }
 
     .card {
-      background: #fff;
+      background: #F5F0E8;
       border-radius: 14px;
       overflow: hidden;
       border: 1px solid rgba(46,94,110,0.07);
@@ -254,7 +254,7 @@
 </header>
 
 <!-- ② FIRST VIEW -->
-<section id="top" class="min-h-screen flex flex-col justify-center pt-24 pb-16 px-5">
+<section id="top" class="min-h-screen flex flex-col justify-center pt-24 pb-6 px-5">
   <div class="max-w-5xl mx-auto w-full">
     <div class="flex flex-col md:flex-row items-center gap-10 md:gap-20">
       <div class="flex-shrink-0">
@@ -300,7 +300,7 @@
 </section>
 
 <!-- ③ ABOUT ME -->
-<section id="about" class="py-24 bg-white/40">
+<section id="about" class="py-12 bg-white/40">
   <div class="max-w-5xl mx-auto px-5">
     <div class="relative mb-14 reveal">
       <span class="sec-num select-none">01</span>
@@ -423,6 +423,9 @@
       <button class="fil-btn font-sans text-xs px-4 py-2 rounded-full border border-primary/25 text-primary"
               onclick="filterWorks('community')" data-f="community">地域・教育活動</button>
     </div>
+    <p class="font-sans text-dark/40 mb-6 -mt-4" style="font-size:12px;">
+      💡 カードをクリックするとプロジェクトサイトへ移動します
+    </p>
     <div id="works-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
   </div>
 </section>
@@ -562,7 +565,7 @@ function workCard(w) {
        </div>`;
   return `<a href="${url}" target="_blank" rel="noopener" class="card block">
     ${thumb}
-    <div class="p-4">
+    <div class="p-4 bg-cream/60">
       <p class="font-sans text-accent mb-1" style="font-size:10px; letter-spacing:0.06em;">${w.label}</p>
       <h3 class="font-sans font-medium text-dark leading-snug" style="font-size:13px;">${w.title}</h3>
     </div>
@@ -589,54 +592,41 @@ function scrollToWorks() {
 
 filterWorks('all');
 
-/* ── Note RSS fetch（リスト形式バージョン） ── */
+/* ── Note RSS fetch（note-articles.json から読み込み） ── */
 async function fetchNote() {
   const loading = document.getElementById('note-loading');
   const errEl   = document.getElementById('note-error');
   const grid    = document.getElementById('note-grid');
 
-  // ご自身のnote ID
-  const NOTE_ID = 'business_lab_jp'; 
-  const rssUrl = `https://note.com/${NOTE_ID}/rss`;
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
   try {
-    const res = await fetch(apiUrl);
+    const res = await fetch('/note-articles.json?_=' + Date.now());
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (data.status !== 'ok' || !data.items || data.items.length === 0) throw new Error('No items');
+    const articles = await res.json();
+    if (!Array.isArray(articles) || articles.length === 0) throw new Error('No items');
 
-    // リスト形式にするため、gridのクラスを変更（1列の縦並びにする）
-    grid.className = "flex flex-col gap-4";
+    grid.className = 'flex flex-col gap-4';
 
-    grid.innerHTML = data.items.slice(0, 3).map(art => {
-      // 日付のフォーマット
-      const d = new Date(art.pubDate.replace(/-/g, '/'));
+    grid.innerHTML = articles.slice(0, 3).map(art => {
+      const d   = new Date(art.pubDate);
       const ymd = isNaN(d) ? '' :
         `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
 
-      // 画像を使わず、シンプルなリスト形式のHTMLを生成
       return `
-      <a href="${art.link}" target="_blank" rel="noopener" 
+      <a href="${art.link}" target="_blank" rel="noopener"
          class="flex items-start gap-4 p-5 bg-white/60 border border-primary/10 rounded-xl hover:bg-white hover:shadow-md hover:-translate-y-1 transition-all">
-        
-        <!-- 左側のアイコン部分（ペンのアイコン） -->
         <div class="flex-shrink-0 mt-0.5 w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center text-primary/70">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
           </svg>
         </div>
-
-        <!-- 右側のテキスト部分 -->
         <div class="flex-grow">
           <p class="font-sans text-dark/40 mb-1" style="font-size:11px; letter-spacing:0.05em;">${ymd}</p>
           <h3 class="font-sans font-medium text-dark leading-relaxed" style="font-size:15px;">${art.title}</h3>
         </div>
-        
-        <!-- 右端の矢印 -->
         <div class="flex-shrink-0 mt-2 text-primary/30">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
           </svg>
         </div>
       </a>`;
@@ -653,7 +643,6 @@ async function fetchNote() {
 }
 
 fetchNote();
-
 </script>
 </body>
 </html>
