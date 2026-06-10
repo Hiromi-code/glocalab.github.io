@@ -154,6 +154,13 @@
     .card img { transition: transform 0.5s ease; }
     .card:hover img { transform: scale(1.05); }
 
+    .card-static { cursor: default; }
+    .card-static:hover {
+      transform: none;
+      box-shadow: 0 2px 10px rgba(46,94,110,0.05);
+    }
+    .card-static:hover img { transform: none; }
+
     .ph-teal  { background: linear-gradient(135deg, #2E5E6E 0%, #3d7a8e 100%); }
     .ph-amber { background: linear-gradient(135deg, #C17B3A 0%, #d4934f 100%); }
     .ph-dark  { background: linear-gradient(135deg, #4a4a4a 0%, #6a6a6a 100%); }
@@ -429,7 +436,7 @@
               onclick="filterWorks('community')" data-f="community">地域・教育活動</button>
     </div>
     <p class="font-sans text-dark/40 mb-6 -mt-4" style="font-size:12px;">
-      💡 カードをクリックするとプロジェクトサイトへ移動します
+      💡 リンクマークのあるカードはクリックでサイトへ移動します
     </p>
     <div id="works-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
   </div>
@@ -534,22 +541,74 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 /* ── Works data ── */
 const WORKS = [
-  { title: 'オンライン秘書',                 sub: '属人化解消 / 手作業→半自動化 / 可視化',          image: '打ち合わせ_オンライン.jpg',            cat: 'online', pos: 'right center', label: 'オンライン業務支援'},
-  { title: 'EC運営サポート',                 sub: 'RPA導入で受注処理自動化',                         image: '仕事場.JPG',                           cat: 'online',                      label: 'オンライン業務支援'},
-  { title: 'ノンデザイナー向けデザイン講座', sub: '業務受託するための資格講座',                      image: 'ノンデザイナーのためのデザイン講座.png', cat: 'online', pos: 'right center', label: 'オンライン業務支援',},
-  { title: '業務分解ワークショップ',         sub: '詳細は☞サイトへ',                                image: '仕事ワークショップ.jpg',               cat: 'dx',                          label: '業務改善・DX支援',  url: 'https://businesslab-i3f.pages.dev/workshop/' },
-  { title: '業務分解ツール開発',             sub: '詳細は☞サイトへ',                                image: '業務分解ツール開発.png',               cat: 'dx',     pos: 'center top',   label: '業務改善・DX支援',  url: 'https://hiromi-code.github.io/BusinessLab/gyomu-kaikaku/' },
-  { title: 'RPA導入支援',                   sub:'RoboPat認定',image: 'RPA.JPG', cat: 'dx',                          label: '業務改善・DX支援'},
-  { title: '子ども出版社',                   sub: '詳細は☞サイトへ',                                image: '子ども出版社.JPG',                     cat: 'community',                   label: '地域・教育活動',    url: 'https://nagomi-publishing.studio.site/' },
-  { title: '子どもメディア俱楽部',           sub: '詳細は☞サイトへ',                                image: '神楽プロジェクト.jpg',                 cat: 'community',                   label: '地域・教育活動',    url: 'https://hiromi-code.github.io/kodomo-media-club/kodomo-media-club.html' },
-  { title: '子どもまんが倶楽部',             sub: '詳細は☞サイトへ',                                image: 'まんがワークショップ.JPG',             cat: 'community',                   label: '地域・教育活動',    url: 'https://nagomi-publishing.studio.site/%E3%81%BE%E3%82%93%E3%81%8C%E4%BF%B1%E6%A5%BD%E9%83%A8' },
-  { title: '手すき和紙プロダクトコンペティション（×崇城大学）', image: '手すき和紙イベント.JPG', cat: 'community',             label: '地域・教育活動'},
-  { title: '菊池川流域高校生サミット広報部', sub: '詳細は☞サイトへ',                                image: '広報部.JPG',                           cat: 'community',                   label: '地域・教育活動',    url: 'https://highschoolsamitto.wixsite.com/highscsum' },
-  { title: '菊池川流域の恵み体験協議会',     sub: '詳細は☞サイトへ',                                image: '菊池川流域.JPG',                       cat: 'community',                   label: '地域・教育活動',    url: 'https://www.facebook.com/profile.php?id=100064932334346' },
+  // ── 業務改善・DX支援 ──
+  { title: '業務分解ワークショップ',
+    sub: '業務の手順を分解し、属人化を解消。チームで再設計するワークショップ。',
+    image: '仕事ワークショップ.jpg',
+    cat: 'dx', label: '業務改善・DX支援',
+    url: 'https://businesslab-i3f.pages.dev/workshop/' },
+
+  { title: '業務の詰まりどころ診断（無料ツール）',
+    sub: 'AIを活用した15〜20分の自己診断で、業務の改善ポイントを特定。',
+    image: '業務分解ツール開発.png',
+    cat: 'dx', pos: 'center top', label: '業務改善・DX支援',
+    url: 'https://hiromi-code.github.io/gyomu-kaikaku-tool/' },
+
+  { title: '患者来院履歴管理システム',
+    sub: '医療クリニック向け。Excel VBAで来院記録・集計・アラートを自動化。',
+    ph: 'ph-teal', icon: '⚕️',
+    cat: 'dx', label: '業務改善・DX支援', noLink: true },
+
+  { title: 'RPA（RoboPat）による定型業務自動化',
+    sub: 'RoboPat認定。繰り返し業務をRPAで自動化し、担当者の工数を削減。',
+    image: 'RPA.JPG',
+    cat: 'dx', label: '業務改善・DX支援', noLink: true },
+
+  // ── オンライン業務支援 ──
+  { title: '訪問マッサージ事業者の運営サポート',
+    sub: '予約管理・業務フロー整理・スタッフ間の情報共有を一元化。',
+    ph: 'ph-amber', icon: '💆',
+    cat: 'online', label: 'オンライン業務支援', noLink: true },
+
+  { title: 'スケジューリングシステム',
+    sub: 'Googleカレンダー＋GASで自動通知・予定管理・担当割り当てを仕組み化。',
+    ph: 'ph-teal', icon: '📅',
+    cat: 'online', label: 'オンライン業務支援', noLink: true },
+
+  { title: 'ImportJapan.Com',
+    sub: '自社EC。日本製刃物・ナイフの輸出入サイトの企画・構築・運営。',
+    ph: 'ph-dark', icon: '🌐',
+    cat: 'online', label: 'オンライン業務支援', noLink: true },
+
+  { title: '政治コンサルタントの秘書業務',
+    sub: 'スケジュール管理・調査・資料作成・関係者調整を包括サポート。',
+    ph: 'ph-amber', icon: '🗂️',
+    cat: 'online', label: 'オンライン業務支援', noLink: true },
+
+  // ── 地域・教育活動 ──
+  { title: '子どもメディア俱楽部',
+    sub: '子どもたちがメディアを"使う側"から"つくる側"へ。映像・記事制作を体験。',
+    image: '神楽プロジェクト.jpg',
+    cat: 'community', label: '地域・教育活動',
+    url: 'https://hiromi-code.github.io/kodomo-media-club/kodomo-media-club.html' },
+
+  { title: '4コマ漫画ジェネレーター（子ども向け）',
+    sub: 'AIを使って子どもが4コマ漫画を作れるWebツール。創作×デジタルの入口。',
+    image: 'まんがワークショップ.JPG',
+    cat: 'community', label: '地域・教育活動', noLink: true },
+
+  { title: '業務改善・デジタルスキルのワークショップ',
+    sub: '地域の事業者向けに「伝わる業務整理」と基礎的なデジタル活用を体験。',
+    ph: 'ph-teal', icon: '🌿',
+    cat: 'community', label: '地域・教育活動', noLink: true },
+
+  { title: '地域のガイドブック制作',
+    sub: '地域の魅力を取材・編集・デザインし、手に取りたくなる形にまとめるプロジェクト。',
+    ph: 'ph-amber', icon: '📖',
+    cat: 'community', label: '地域・教育活動', noLink: true },
 ];
 
 function workCard(w) {
-  const url = w.url || NOTE_TOP;
   const thumb = w.image
     ? `<div class="overflow-hidden" style="aspect-ratio:4/3;">
          <img src="${w.image}" alt="${w.title}"
@@ -560,13 +619,22 @@ function workCard(w) {
     : `<div class="${w.ph||'ph-teal'} flex items-center justify-center" style="aspect-ratio:4/3;">
          <span style="font-size:2.8rem; opacity:0.75;">${w.icon||'✦'}</span>
        </div>`;
-  return `<a href="${url}" target="_blank" rel="noopener" class="card block">
+  const body = `
     ${thumb}
     <div class="p-4 bg-cream/60">
       <p class="font-sans text-accent mb-1" style="font-size:10px; letter-spacing:0.06em;">${w.label}</p>
       <h3 class="font-sans font-medium text-dark leading-snug" style="font-size:13px;">${w.title}</h3>
       ${w.sub ? `<p class="font-sans text-dark/40 mt-1.5 leading-relaxed" style="font-size:11px;">${w.sub}</p>` : ''}
+    </div>`;
+  if (w.noLink) {
+    return `<div class="card card-static block">${body}</div>`;
+  }
+  const url = w.url || NOTE_TOP;
+  return `<a href="${url}" target="_blank" rel="noopener" class="card block">
+    <div class="relative">
+      <span style="position:absolute;top:8px;right:8px;background:rgba(46,94,110,0.7);color:#F5F0E8;font-size:10px;padding:2px 7px;border-radius:999px;z-index:1;pointer-events:none;">↗ リンクあり</span>
     </div>
+    ${body}
   </a>`;
 }
 
